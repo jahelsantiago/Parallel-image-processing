@@ -1,147 +1,144 @@
-//This is a program to parallelize the image processing using convolution and posix threads.
-
-//add headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "Image.h"
+#include "utils.h"
 #include <math.h>
 #include <pthread.h>
-#include <time.h>
-#include <sys/time.h>
 
-//add opencv headers
-#include <opencv2/core/types_c.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image/stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image/stb_image_write.h"
 
 
-//read a .jpg image using opencv
-IplImage* read_image(char* filename)
-{
-    IplImage* img = cvLoadImage(filename, CV_LOAD_IMAGE_COLOR);
-    if (!img)
-    {
-        printf("Could not open file %s\n", filename);
-        return 0;
+void Image_load(Image *img, const char *fname) {
+    if((img->data = stbi_load(fname, &img->width, &img->height, &img->channels, 0)) != NULL) {
+        img->size = img->width * img->height * img->channels;
+        img->allocation_ = STB_ALLOCATED;
     }
-    return img;
 }
 
-
-//convert IplImage to a matrix of doubles 
-double** convert_IplImage_to_matrix(IplImage* img)
-{
-    double** matrix = (double**)malloc(img->height * sizeof(double*));
-    for (int i = 0; i < img->height; i++)
-    {
-        matrix[i] = (double*)malloc(img->width * sizeof(double));
+void Image_create(Image *img, int width, int height, int channels, bool zeroed) {
+    size_t size = width * height * channels;
+    if(zeroed) {
+        img->data = calloc(size, 1);
+    } else {
+        img->data = malloc(size);
     }
-    for (int i = 0; i < img->height; i++)
-    {
-        for (int j = 0; j < img->width; j++)
-        {
-            matrix[i][j] = (double)img->imageData[i * img->widthStep + j * img->nChannels];
+
+    if(img->data != NULL) {
+        img->width = width;
+        img->height = height;
+        img->size = size;
+        img->channels = channels;
+        img->allocation_ = SELF_ALLOCATED;
+    }
+}
+
+void Image_save(const Image *img, const char *fname) {
+    // Check if the file name ends in one of the .jpg/.JPG/.jpeg/.JPEG or .png/.PNG
+    if(str_ends_in(fname, ".jpg") || str_ends_in(fname, ".JPG") || str_ends_in(fname, ".jpeg") || str_ends_in(fname, ".JPEG")) {
+        stbi_write_jpg(fname, img->width, img->height, img->channels, img->data, 100);
+    } else if(str_ends_in(fname, ".png") || str_ends_in(fname, ".PNG")) {
+        stbi_write_png(fname, img->width, img->height, img->channels, img->data, img->width * img->channels);
+    } else {
+        ON_ERROR_EXIT(false, "");
+    }
+}
+
+void Image_free(Image *img) {
+    if(img->allocation_ != NO_ALLOCATION && img->data != NULL) {
+        if(img->allocation_ == STB_ALLOCATED) {
+            stbi_image_free(img->data);
+        } else {
+            free(img->data);
         }
+        img->data = NULL;
+        img->width = 0;
+        img->height = 0;
+        img->size = 0;
+        img->allocation_ = NO_ALLOCATION;
     }
-    return matrix;
 }
 
-//convert a matrix of doubles to an IplImage
-IplImage* convert_matrix_to_IplImage(double** matrix, int height, int width)
-{
-    IplImage* img = cvCreateImage(cvSize(width, height), IPL_DEPTH_8U, 1);
-    for (int i = 0; i < height; i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
-            img->imageData[i * img->widthStep + j * img->nChannels] = (unsigned char)matrix[i][j];
-        }
+void Image_to_gray(const Image *orig, Image *gray) {
+    ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
+    int channels = orig->channels == 4 ? 2 : 1;
+    Image_create(gray, orig->width, orig->height, channels, false);
+    ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
+    //print the size of the image, the width and height, and the number of channels
+
+    //loop through the image and convert each pixel to grayscale
+    for(int i = 0; i < orig->size; i += orig->channels) {
+        //calculate the average of the RGB values
+        int avg = (orig->data[i] + orig->data[i + 1] + orig->data[i + 2]) / 3;
+        //set the pixel to the average
+        gray->data[i / orig->channels] = avg;
     }
-    return img;
+
 }
 
-//write an IplImage to a .jpg file
-void write_image(IplImage* img, char* filename)
-{
-    cvSaveImage(filename, img);
+thread_data_t* Generate_thread_data(int num_threads, Image *img, Image *gray) {
+    thread_data_t *thread_data = malloc(num_threads * sizeof(thread_data_t));
+    ON_ERROR_EXIT(thread_data == NULL, "Error in creating the thread data");
+
+    int size = img->size / num_threads;
+    int start = 0;
+    for(int i = 0; i < num_threads; i++) {
+        thread_data[i].rank = i;
+        thread_data[i].start = start;
+        thread_data[i].size = size;
+        thread_data[i].img = img;
+        thread_data[i].gray = gray;
+        start += size;
+    }
+
+    return thread_data;
+} 
+
+void* Help_image_to_gray(void *thread_data) {
+    thread_data = (thread_data_t *)thread_data;
+
+    int start = ((thread_data_t *)thread_data)->start;
+    int size = ((thread_data_t *)thread_data)->size;
+
+    Image *img = ((thread_data_t *)thread_data)->img;
+    uint8_t *data = img->data;
+
+    Image *gray = ((thread_data_t *)thread_data)->gray;
+    uint8_t *gray_data = gray->data;
+
+    int i;
+    for(i = start; i < start + size; i++) {
+        int avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        gray_data[i] = avg;
+    }
+
+    return NULL;
 }
 
-//function to apply convolutions to a matrix of doubles
-double** convolve(double** matrix, int height, int width, double** kernel, int kernel_height, int kernel_width)
-{
-    double** result = (double**)malloc(height * sizeof(double*));
-    for (int i = 0; i < height; i++)
-    {
-        result[i] = (double*)malloc(width * sizeof(double));
+void paralel_image_to_gray(Image *orig, Image *gray) {
+    ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
+    int channels = orig->channels == 4 ? 2 : 1;
+    Image_create(gray, orig->width, orig->height, channels, false);
+    ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
+    
+    //create the thread data
+    thread_data_t *thread_data = Generate_thread_data(NUMBER_OF_THREADS, orig, gray);
+
+    //create the threads
+    int err;
+    pthread_t threads[NUMBER_OF_THREADS];
+    for(int i = 0; i < NUMBER_OF_THREADS; i++) {
+        err = pthread_create(&threads[i], NULL, Help_image_to_gray, (void*)&thread_data[i]);
+        ON_ERROR_EXIT(err != 0, "Error in creating the thread");
     }
-    for (int i = 0; i < height; i++)
-    {
-        for (int j = 0; j < width; j++)
-        {
-            double sum = 0;
-            for (int k = 0; k < kernel_height; k++)
-            {
-                for (int l = 0; l < kernel_width; l++)
-                {
-                    int x = i + k - kernel_height / 2;
-                    int y = j + l - kernel_width / 2;
-                    if (x >= 0 && x < height && y >= 0 && y < width)
-                    {
-                        sum += matrix[x][y] * kernel[k][l];
-                    }
-                }
-            }
-            result[i][j] = sum;
-        }
+
+    //wait for the threads to finish
+    for(int i = 0; i < NUMBER_OF_THREADS; i++) {
+        pthread_join(threads[i], NULL);
     }
-    return result;
+
+    //free the thread data
+    free(thread_data);
 }
 
-
-//creat a main function to test the program
-int main(int argc, char** argv)
-{
-    //read the image
-    IplImage* img = read_image("lena.jpg");
-    //convert the image to a matrix of doubles
-    double** matrix = convert_IplImage_to_matrix(img);
-    //create a kernel
-    double** kernel = (double**)malloc(3 * sizeof(double*));
-    for (int i = 0; i < 3; i++)
-    {
-        kernel[i] = (double*)malloc(3 * sizeof(double));
-    }
-    kernel[0][0] = 1;
-    kernel[0][1] = 1;
-    kernel[0][2] = 1;
-    kernel[1][0] = 1;
-    kernel[1][1] = 1;
-    kernel[1][2] = 1;
-    kernel[2][0] = 1;
-    kernel[2][1] = 1;
-    kernel[2][2] = 1;
-    //apply the convolution
-    double** result = convolve(matrix, img->height, img->width, kernel, 3, 3);
-    //convert the result to an IplImage
-    IplImage* result_img = convert_matrix_to_IplImage(result, img->height, img->width);
-    //write the result to a .jpg file
-    write_image(result_img, "result.jpg");
-    //free the memory
-    cvReleaseImage(&img);
-    cvReleaseImage(&result_img);
-    for (int i = 0; i < 3; i++)
-    {
-        free(kernel[i]);
-    }
-    free(kernel);
-    for (int i = 0; i < img->height; i++)
-    {
-        free(matrix[i]);
-    }
-    free(matrix);
-    for (int i = 0; i < img->height; i++)
-    {
-        free(result[i]);
-    }
-    free(result);
-    return 0;
-}
 

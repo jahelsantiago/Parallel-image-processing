@@ -23,6 +23,7 @@ typedef struct {
     int rank;
     int start; // the start in the for loop
     int size; // the size of the for loop
+    int channels;
     Image *img; 
     Image *gray;
 } thread_data_t;

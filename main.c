@@ -16,7 +16,7 @@ int main(void) {
     // Convert the images to gray
     Image img_sky_gray, img_shapes_gray;
     paralel_image_to_gray(&img_sky, &img_sky_gray);
-    Image_to_gray(&img_shapes, &img_shapes_gray);
+    paralel_image_to_gray(&img_shapes, &img_shapes_gray);
 
 
     // Save images

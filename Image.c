@@ -64,7 +64,6 @@ void Image_to_gray(const Image *orig, Image *gray) {
     int channels = orig->channels == 4 ? 2 : 1;
     Image_create(gray, orig->width, orig->height, channels, false);
     ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
-    //print the size of the image, the width and height, and the number of channels
 
     //loop through the image and convert each pixel to grayscale
     for(int i = 0; i < orig->size; i += orig->channels) {
@@ -88,17 +87,22 @@ thread_data_t* Generate_thread_data(int num_threads, Image *img, Image *gray) {
         thread_data[i].size = size;
         thread_data[i].img = img;
         thread_data[i].gray = gray;
+        thread_data[i].channels = img->channels;
         start += size;
     }
+
+    
 
     return thread_data;
 } 
 
 void* Help_image_to_gray(void *thread_data) {
+
     thread_data = (thread_data_t *)thread_data;
 
     int start = ((thread_data_t *)thread_data)->start;
     int size = ((thread_data_t *)thread_data)->size;
+    int channels = ((thread_data_t *)thread_data)->channels;
 
     Image *img = ((thread_data_t *)thread_data)->img;
     uint8_t *data = img->data;
@@ -107,9 +111,9 @@ void* Help_image_to_gray(void *thread_data) {
     uint8_t *gray_data = gray->data;
 
     int i;
-    for(i = start; i < start + size; i++) {
+    for(i = start; i < start + size; i += channels) {
         int avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        gray_data[i] = avg;
+        gray_data[i / channels] = avg;
     }
 
     return NULL;
@@ -127,16 +131,22 @@ void paralel_image_to_gray(Image *orig, Image *gray) {
     //create the threads
     int err;
     pthread_t threads[NUMBER_OF_THREADS];
+
     for(int i = 0; i < NUMBER_OF_THREADS; i++) {
-        err = pthread_create(&threads[i], NULL, Help_image_to_gray, (void*)&thread_data[i]);
-        ON_ERROR_EXIT(err != 0, "Error in creating the thread");
+        err = pthread_create(&threads[i], NULL, Help_image_to_gray, &thread_data[i]);
+
+        if(err != 0) {
+            ON_ERROR_EXIT(true, "Error in creating the thread");
+        }
     }
 
     //wait for the threads to finish
     for(int i = 0; i < NUMBER_OF_THREADS; i++) {
-        pthread_join(threads[i], NULL);
+        err = pthread_join(threads[i], NULL);
     }
 
+
+    
     //free the thread data
     free(thread_data);
 }

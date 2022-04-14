@@ -14,8 +14,6 @@ int main(int argc, char** argv ) {
         return -1;
     }
 
-    // take time to measure the execution time
-    clock_t begin = clock();
 
 
     Image img_original;
@@ -24,9 +22,15 @@ int main(int argc, char** argv ) {
     Image_load(&img_original, argv[1]);
     ON_ERROR_EXIT(img_original.data == NULL, "Error in loading the image");
 
+    // take time to measure the execution time
+    clock_t begin = clock();
+
     // Convert the images to gray
     Image img_gray_result;
     paralel_image_to_gray(&img_original, &img_gray_result);
+
+    clock_t end = clock();
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
 
     // Save images
@@ -37,7 +41,5 @@ int main(int argc, char** argv ) {
     Image_free(&img_original);
     Image_free(&img_gray_result);
 
-    clock_t end = clock();
-    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("Execution time: %f\n", time_spent);
 }

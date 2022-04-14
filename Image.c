@@ -1,7 +1,7 @@
 #include "Image.h"
 #include "utils.h"
-#include <math.h>
-#include <pthread.h>
+#include "math.h"
+#include "pthread.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image/stb_image.h"
@@ -91,13 +91,10 @@ thread_data_t* Generate_thread_data(int num_threads, Image *img, Image *gray) {
         start += size;
     }
 
-    
-
     return thread_data;
 } 
 
 void* Help_image_to_gray(void *thread_data) {
-
     thread_data = (thread_data_t *)thread_data;
 
     int start = ((thread_data_t *)thread_data)->start;
@@ -145,8 +142,6 @@ void paralel_image_to_gray(Image *orig, Image *gray) {
         err = pthread_join(threads[i], NULL);
     }
 
-
-    
     //free the thread data
     free(thread_data);
 }

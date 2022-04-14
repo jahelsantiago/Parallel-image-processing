@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define NUMBER_OF_THREADS 4
+extern char **global_argv;
+#define NUMBER_OF_THREADS atoi(global_argv[3])
 
 enum allocation_type {
     NO_ALLOCATION, SELF_ALLOCATED, STB_ALLOCATED

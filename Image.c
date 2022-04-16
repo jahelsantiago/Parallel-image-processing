@@ -130,7 +130,7 @@ void paralel_image_to_gray(Image *orig, Image *gray) {
     pthread_t threads[NUMBER_OF_THREADS];
 
     for(int i = 0; i < NUMBER_OF_THREADS; i++) {
-        err = pthread_create(&threads[i], NULL, Help_image_to_gray, &thread_data[i]);
+        err = pthread_create(&threads[i], NULL, (void *)Help_image_to_gray, &thread_data[i]);
 
         if(err != 0) {
             ON_ERROR_EXIT(true, "Error in creating the thread");
@@ -140,6 +140,10 @@ void paralel_image_to_gray(Image *orig, Image *gray) {
     //wait for the threads to finish
     for(int i = 0; i < NUMBER_OF_THREADS; i++) {
         err = pthread_join(threads[i], NULL);
+        if(err != 0) {
+            ON_ERROR_EXIT(true, "Error in joining the thread");
+        }
+
     }
 
     //free the thread data

@@ -94,24 +94,27 @@ thread_data_t* Generate_thread_data(int num_threads, Image *img, Image *gray) {
     return thread_data;
 } 
 
-void* Help_image_to_gray(void *thread_data) {
-    thread_data = (thread_data_t *)thread_data;
+void* Help_image_to_gray(void *thr_d) {
+    thread_data_t *thread_data = thr_d;
 
-    int start = ((thread_data_t *)thread_data)->start;
-    int size = ((thread_data_t *)thread_data)->size;
-    int channels = ((thread_data_t *)thread_data)->channels;
+    int start = thread_data->start;
+    int size = thread_data->size;
+    int channels = thread_data->channels;
 
-    Image *img = ((thread_data_t *)thread_data)->img;
+    Image *img = thread_data->img;
     uint8_t *data = img->data;
 
-    Image *gray = ((thread_data_t *)thread_data)->gray;
+    Image *gray = thread_data->gray;
     uint8_t *gray_data = gray->data;
 
-    int i;
-    for(i = start; i < start + size; i += channels) {
+    for(int i = start; i < start + size; i += channels) {
         int avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
         gray_data[i / channels] = avg;
     }
+
+    // print section of the image which was processed
+    printf("Thread # %d : Processed section of the image: %d - %d\n", thread_data->rank, start, start + size);
+    fflush(stdout);
 
     return NULL;
 }

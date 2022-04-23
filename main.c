@@ -14,8 +14,6 @@ int main(int argc, char** argv ) {
         return -1;
     }
 
-
-
     Image img_original;
 
     // Load the original_image_route
@@ -32,7 +30,6 @@ int main(int argc, char** argv ) {
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-
     // Save images
     Image_save(&img_gray_result, argv[2]);
     printf("Images saved successfully\n");
@@ -42,4 +39,5 @@ int main(int argc, char** argv ) {
     Image_free(&img_gray_result);
 
     printf("Execution time: %f\n", time_spent);
+    fflush(stdout);
 }

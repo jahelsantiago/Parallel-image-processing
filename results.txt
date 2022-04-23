@@ -1,0 +1,156 @@
+----------------------------------------
+
+>> 720p test with 1 threads:
+Thread # 0 : Processed section of the image: 0 - 2764800
+Images saved successfully
+Execution time: 0.006000
+
+>> 720p test with 2 threads:
+Thread # 0 : Processed section of the image: 0 - 1382400
+Thread # 1 : Processed section of the image: 1382400 - 2764800
+Images saved successfully
+Execution time: 0.003000
+
+>> 720p test with 4 threads:
+Thread # 0 : Processed section of the image: 0 - 691200
+Thread # 1 : Processed section of the image: 691200 - 1382400
+Thread # 2 : Processed section of the image: 1382400 - 2073600
+Thread # 3 : Processed section of the image: 2073600 - 2764800
+Images saved successfully
+Execution time: 0.003000
+
+>> 720p test with 8 threads:
+Thread # 0 : Processed section of the image: 0 - 345600
+Thread # 1 : Processed section of the image: 345600 - 691200
+Thread # 2 : Processed section of the image: 691200 - 1036800
+Thread # 4 : Processed section of the image: 1382400 - 1728000
+Thread # 5 : Processed section of the image: 1728000 - 2073600
+Thread # 7 : Processed section of the image: 2419200 - 2764800
+Thread # 6 : Processed section of the image: 2073600 - 2419200
+Thread # 3 : Processed section of the image: 1036800 - 1382400
+Images saved successfully
+Execution time: 0.002000
+
+>> 720p test with 16 threads:
+Thread # 0 : Processed section of the image: 0 - 172800
+Thread # 2 : Processed section of the image: 345600 - 518400
+Thread # 1 : Processed section of the image: 172800 - 345600
+Thread # 3 : Processed section of the image: 518400 - 691200
+Thread # 6 : Processed section of the image: 1036800 - 1209600
+Thread # 4 : Processed section of the image: 691200 - 864000
+Thread # 5 : Processed section of the image: 864000 - 1036800
+Thread # 7 : Processed section of the image: 1209600 - 1382400
+Thread # 10 : Processed section of the image: 1728000 - 1900800
+Thread # 11 : Processed section of the image: 1900800 - 2073600
+Thread # 14 : Processed section of the image: 2419200 - 2592000
+Thread # 9 : Processed section of the image: 1555200 - 1728000
+Thread # 12 : Processed section of the image: 2073600 - 2246400
+Thread # 8 : Processed section of the image: 1382400 - 1555200
+Thread # 13 : Processed section of the image: 2246400 - 2419200
+Thread # 15 : Processed section of the image: 2592000 - 2764800
+Images saved successfully
+Execution time: 0.001000
+----------------------------------------
+
+>> 1080p test with 1 threads:
+Thread # 0 : Processed section of the image: 0 - 6220800
+Images saved successfully
+Execution time: 0.013000
+
+>> 1080p test with 2 threads:
+Thread # 0 : Processed section of the image: 0 - 3110400
+Thread # 1 : Processed section of the image: 3110400 - 6220800
+Images saved successfully
+Execution time: 0.006000
+
+>> 1080p test with 4 threads:
+Thread # 0 : Processed section of the image: 0 - 1555200
+Thread # 1 : Processed section of the image: 1555200 - 3110400
+Thread # 2 : Processed section of the image: 3110400 - 4665600
+Thread # 3 : Processed section of the image: 4665600 - 6220800
+Images saved successfully
+Execution time: 0.003000
+
+>> 1080p test with 8 threads:
+Thread # 2 : Processed section of the image: 1555200 - 2332800
+Thread # 3 : Processed section of the image: 2332800 - 3110400
+Thread # 1 : Processed section of the image: 777600 - 1555200
+Thread # 6 : Processed section of the image: 4665600 - 5443200
+Thread # 5 : Processed section of the image: 3888000 - 4665600
+Thread # 4 : Processed section of the image: 3110400 - 3888000
+Thread # 7 : Processed section of the image: 5443200 - 6220800
+Thread # 0 : Processed section of the image: 0 - 777600
+Images saved successfully
+Execution time: 0.004000
+
+>> 1080p test with 16 threads:
+Thread # 0 : Processed section of the image: 0 - 388800
+Thread # 2 : Processed section of the image: 777600 - 1166400
+Thread # 1 : Processed section of the image: 388800 - 777600
+Thread # 3 : Processed section of the image: 1166400 - 1555200
+Thread # 8 : Processed section of the image: 3110400 - 3499200
+Thread # 4 : Processed section of the image: 1555200 - 1944000
+Thread # 6 : Processed section of the image: 2332800 - 2721600
+Thread # 7 : Processed section of the image: 2721600 - 3110400
+Thread # 5 : Processed section of the image: 1944000 - 2332800
+Thread # 9 : Processed section of the image: 3499200 - 3888000
+Thread # 10 : Processed section of the image: 3888000 - 4276800
+Thread # 15 : Processed section of the image: 5832000 - 6220800
+Thread # 12 : Processed section of the image: 4665600 - 5054400
+Thread # 11 : Processed section of the image: 4276800 - 4665600
+Thread # 13 : Processed section of the image: 5054400 - 5443200
+Thread # 14 : Processed section of the image: 5443200 - 5832000
+Images saved successfully
+Execution time: 0.004000
+----------------------------------------
+
+>> 4k test with 1 threads:
+Thread # 0 : Processed section of the image: 0 - 24883200
+Images saved successfully
+Execution time: 0.044000
+
+>> 4k test with 2 threads:
+Thread # 0 : Processed section of the image: 0 - 12441600
+Thread # 1 : Processed section of the image: 12441600 - 24883200
+Images saved successfully
+Execution time: 0.030000
+
+>> 4k test with 4 threads:
+Thread # 1 : Processed section of the image: 6220800 - 12441600
+Thread # 0 : Processed section of the image: 0 - 6220800
+Thread # 2 : Processed section of the image: 12441600 - 18662400
+Thread # 3 : Processed section of the image: 18662400 - 24883200
+Images saved successfully
+Execution time: 0.020000
+
+>> 4k test with 8 threads:
+Thread # 1 : Processed section of the image: 3110400 - 6220800
+Thread # 2 : Processed section of the image: 6220800 - 9331200
+Thread # 5 : Processed section of the image: 15552000 - 18662400
+Thread # 7 : Processed section of the image: 21772800 - 24883200
+Thread # 6 : Processed section of the image: 18662400 - 21772800
+Thread # 3 : Processed section of the image: 9331200 - 12441600
+Thread # 4 : Processed section of the image: 12441600 - 15552000
+Thread # 0 : Processed section of the image: 0 - 3110400
+Images saved successfully
+Execution time: 0.011000
+
+>> 4k test with 16 threads:
+Thread # 1 : Processed section of the image: 1555200 - 3110400
+Thread # 2 : Processed section of the image: 3110400 - 4665600
+Thread # 3 : Processed section of the image: 4665600 - 6220800
+Thread # 4 : Processed section of the image: 6220800 - 7776000
+Thread # 5 : Processed section of the image: 7776000 - 9331200
+Thread # 6 : Processed section of the image: 9331200 - 10886400
+Thread # 0 : Processed section of the image: 0 - 1555200
+Thread # 7 : Processed section of the image: 10886400 - 12441600
+Thread # 8 : Processed section of the image: 12441600 - 13996800
+Thread # 9 : Processed section of the image: 13996800 - 15552000
+Thread # 10 : Processed section of the image: 15552000 - 17107200
+Thread # 11 : Processed section of the image: 17107200 - 18662400
+Thread # 12 : Processed section of the image: 18662400 - 20217600
+Thread # 13 : Processed section of the image: 20217600 - 21772800
+Thread # 14 : Processed section of the image: 21772800 - 23328000
+Thread # 15 : Processed section of the image: 23328000 - 24883200
+Images saved successfully
+Execution time: 0.015000

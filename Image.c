@@ -8,7 +8,12 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image/stb_image_write.h"
 
-
+/**
+ * @brief      Load an image from a file 
+ *
+ * @param[in]  img  The image to load
+ * @param[in] fname  The gray image
+ */
 void Image_load(Image *img, const char *fname) {
     if((img->data = stbi_load(fname, &img->width, &img->height, &img->channels, 0)) != NULL) {
         img->size = img->width * img->height * img->channels;
@@ -16,6 +21,15 @@ void Image_load(Image *img, const char *fname) {
     }
 }
 
+/**
+ * @brief      Allocate memory for an image based on its parameters 
+ *
+ * @param[in]  img  The image to save
+ * @param[in] width  The width of the image
+ * @param[in] height  The height of the image
+ * @param[in] channels  The channels of the image
+ * @param[in] zeroed  If the image should be zeroed
+ */
 void Image_create(Image *img, int width, int height, int channels, bool zeroed) {
     size_t size = width * height * channels;
     if(zeroed) {
@@ -33,6 +47,13 @@ void Image_create(Image *img, int width, int height, int channels, bool zeroed) 
     }
 }
 
+
+/**
+ * @brief      Save an image to a file
+ *
+ * @param[in]  img  The image to save
+ * @param[in] fname  The gray image
+ */
 void Image_save(const Image *img, const char *fname) {
     // Check if the file name ends in one of the .jpg/.JPG/.jpeg/.JPEG or .png/.PNG
     if(str_ends_in(fname, ".jpg") || str_ends_in(fname, ".JPG") || str_ends_in(fname, ".jpeg") || str_ends_in(fname, ".JPEG")) {
@@ -44,6 +65,11 @@ void Image_save(const Image *img, const char *fname) {
     }
 }
 
+/**
+ * @brief      Free the memory of an image
+ *
+ * @param[in]  img  The image to free
+ */
 void Image_free(Image *img) {
     if(img->allocation_ != NO_ALLOCATION && img->data != NULL) {
         if(img->allocation_ == STB_ALLOCATED) {
@@ -59,22 +85,13 @@ void Image_free(Image *img) {
     }
 }
 
-void Image_to_gray(const Image *orig, Image *gray) {
-    ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
-    int channels = orig->channels == 4 ? 2 : 1;
-    Image_create(gray, orig->width, orig->height, channels, false);
-    ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
-
-    //loop through the image and convert each pixel to grayscale
-    for(int i = 0; i < orig->size; i += orig->channels) {
-        //calculate the average of the RGB values
-        int avg = (orig->data[i] + orig->data[i + 1] + orig->data[i + 2]) / 3;
-        //set the pixel to the average
-        gray->data[i / orig->channels] = avg;
-    }
-
-}
-
+/**
+ * @brief      Generate the data that is pased as parameter to the threads
+ * 
+ * @param[in]  num_threads  The number of threads
+ * @param[in]  img  The image to process
+ * @param[in]  gray  The output image
+ */
 thread_data_t* Generate_thread_data(int num_threads, Image *img, Image *gray) {
     thread_data_t *thread_data = malloc(num_threads * sizeof(thread_data_t));
     ON_ERROR_EXIT(thread_data == NULL, "Error in creating the thread data");
@@ -94,6 +111,11 @@ thread_data_t* Generate_thread_data(int num_threads, Image *img, Image *gray) {
     return thread_data;
 } 
 
+/**
+ * @brief      Auxiliar function to process the image in parallel per thread
+ *
+ * @param[in]  thr_d  The thread data
+ */
 void* Help_image_to_gray(void *thr_d) {
     thread_data_t *thread_data = thr_d;
 
@@ -107,8 +129,11 @@ void* Help_image_to_gray(void *thr_d) {
     Image *gray = thread_data->gray;
     uint8_t *gray_data = gray->data;
 
+    // Process the image
     for(int i = start; i < start + size; i += channels) {
+        // Get the average of the RGB values
         int avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        // Set the gray value
         gray_data[i / channels] = avg;
     }
 
@@ -119,6 +144,12 @@ void* Help_image_to_gray(void *thr_d) {
     return NULL;
 }
 
+/**
+ * @brief      paralel_image_to_gray
+ * 
+ * @param[in]  orig  The original image
+ * @param[in]  gray  The output image
+ */
 void paralel_image_to_gray(Image *orig, Image *gray) {
     ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
     int channels = orig->channels == 4 ? 2 : 1;

@@ -9,8 +9,8 @@ int main(int argc, char** argv ) {
     global_argv = argv;
 
     // Check if the user has entered the correct number of arguments
-    if ( argc != 4 ){
-        printf("Input error!\nUse: ./gray <original_image_route> <gray_image_route> <num_threads>\n");
+    if ( argc != 5 ){
+        printf("Input error!\nUse: ./gray <original_image_route> <gray_image_route> <num_threads> <'omp' or 'posix'>\n");
         return -1;
     }
 
@@ -25,7 +25,11 @@ int main(int argc, char** argv ) {
 
     // Convert the images to gray
     Image img_gray_result;
-    Image_to_gray_OMP(&img_original, &img_gray_result);
+    if ( strcmp(argv[4], "omp") == 0 ) {
+        Image_to_gray_OMP(&img_original, &img_gray_result);
+    } else if ( strcmp(argv[4], "posix") == 0 ) {
+        paralel_image_to_gray(&img_original, &img_gray_result);
+    }
 
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;

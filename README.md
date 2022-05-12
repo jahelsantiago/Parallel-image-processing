@@ -22,24 +22,34 @@ make
 ```
 - Opción 2:
 ```
-gcc Image.c main.c -o gray -lm -lpthread
+gcc Image.c main.c -o gray -lm -lpthread -fopenmp
 ```
 
 **2.** Ejecute el programa
 ```
-./gray <original_image_route> <gray_image_route> <num_threads>
+./gray <original_image_route> <gray_image_route> <num_threads> <'omp' or 'posix'>
 ```
 
 **3.** (opcional) Puede correr los tests para verificar que el programa funciona correctamente
 
 Se recomienda hacer uso de Git Bash en Windows para correr los tests
 
-- Opción 1:
+- Opción 1.1: Pthreads - posix
 ```
-make test
+make testpth
 ```
 
-- Opción 2:
+- Opción 1.2: Pthreads - posix
 ```
-sh run.sh
+sh runpth.sh
+```
+
+- Opción 2.1: OpenMP
+```
+make testomp
+```
+
+- Opción 2.2: OpenMP
+```
+sh runomp.sh
 ```

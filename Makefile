@@ -1,10 +1,10 @@
 SHELL := /bin/bash
 
-compilepthread:
-	gcc Image.c main.c -o gray -lm -lpthread
+compile:
+	gcc Image.c main.c -o gray -lm -lpthread -fopenmp
 
-compileomp:
-	gcc Image.c main.c -o gray -lm -fopenmp
+testpth:
+	sh runpth.sh
 
-test: 
-	sh run.sh
+testomp:
+	sh runomp.sh

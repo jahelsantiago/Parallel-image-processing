@@ -1,0 +1,63 @@
+----------------------------------------
+
+>> 720p test with 1 threads:
+Images saved successfully
+Execution time: 0.004000
+
+>> 720p test with 2 threads:
+Images saved successfully
+Execution time: 0.003000
+
+>> 720p test with 4 threads:
+Images saved successfully
+Execution time: 0.003000
+
+>> 720p test with 8 threads:
+Images saved successfully
+Execution time: 0.004000
+
+>> 720p test with 16 threads:
+Images saved successfully
+Execution time: 0.003000
+----------------------------------------
+
+>> 1080p test with 1 threads:
+Images saved successfully
+Execution time: 0.010000
+
+>> 1080p test with 2 threads:
+Images saved successfully
+Execution time: 0.006000
+
+>> 1080p test with 4 threads:
+Images saved successfully
+Execution time: 0.006000
+
+>> 1080p test with 8 threads:
+Images saved successfully
+Execution time: 0.002000
+
+>> 1080p test with 16 threads:
+Images saved successfully
+Execution time: 0.005000
+----------------------------------------
+
+>> 4k test with 1 threads:
+Images saved successfully
+Execution time: 0.040000
+
+>> 4k test with 2 threads:
+Images saved successfully
+Execution time: 0.022000
+
+>> 4k test with 4 threads:
+Images saved successfully
+Execution time: 0.019000
+
+>> 4k test with 8 threads:
+Images saved successfully
+Execution time: 0.013000
+
+>> 4k test with 16 threads:
+Images saved successfully
+Execution time: 0.015000

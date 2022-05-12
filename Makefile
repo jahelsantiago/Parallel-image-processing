@@ -5,3 +5,6 @@ compilepthread:
 
 compileomp:
 	gcc Image.c main.c -o gray -lm -fopenmp
+
+test: 
+	sh run.sh

@@ -2,6 +2,7 @@
 #include "utils.h"
 #include "math.h"
 #include "pthread.h"
+#include <omp.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image/stb_image.h"
@@ -183,5 +184,27 @@ void paralel_image_to_gray(Image *orig, Image *gray) {
     //free the thread data
     free(thread_data);
 }
+
+/**
+ * @brief      Function that converts an image to gray using OPENMP
+ * 
+ * @param[in]  orig  The original image
+ * @param[in]  gray  The output image
+ * */ 
+void Image_to_gray_OMP(Image *orig, Image *gray) {
+    ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
+    int channels = orig->channels == 4 ? 2 : 1;
+    Image_create(gray, orig->width, orig->height, channels, false);
+    ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
+
+    #pragma omp parallel for num_threads(NUMBER_OF_THREADS)
+    for(int i = 0; i < orig->size; i += orig->channels) {
+        // Get the average of the RGB values
+        int avg = (orig->data[i] + orig->data[i + 1] + orig->data[i + 2]) / 3;
+        // Set the gray value
+        gray->data[i / orig->channels] = avg;
+    }
+}
+
 
 

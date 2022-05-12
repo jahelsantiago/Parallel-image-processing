@@ -37,3 +37,4 @@ void Image_to_gray(const Image *orig, Image *gray);
 thread_data_t* Generate_thread_data(int num_threads, Image *img, Image *gray);
 void* Help_image_to_gray(void *thread_data);
 void paralel_image_to_gray(Image *orig, Image *gray);
+void Image_to_gray_OMP(Image *orig, Image *gray);

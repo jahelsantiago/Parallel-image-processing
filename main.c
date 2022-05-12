@@ -25,7 +25,7 @@ int main(int argc, char** argv ) {
 
     // Convert the images to gray
     Image img_gray_result;
-    paralel_image_to_gray(&img_original, &img_gray_result);
+    Image_to_gray_OMP(&img_original, &img_gray_result);
 
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
